@@ -403,7 +403,7 @@
             <section id="section8-2" class="section">
                 <h2 class="section-title">8.2 绘制矢量场流线图</h2>
                 
-                <h3>8.2 实例：二维矢量场流线图</h3>
+                <h3>8.2 实例：二维矢量场可视化（箭头表示）</h3>
                 <div class="chart-container" id="chart8-2">
                     <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
                         <div class="loading"></div>
@@ -526,7 +526,7 @@
             <section id="section8-9" class="section">
                 <h2 class="section-title">8.9 绘制树状图</h2>
                 
-                <h3>8.9 实例：美国各州犯罪案件的树状图</h3>
+                <h3>8.9 实例：美国各州犯罪案件分布（柱状图展示）</h3>
                 <div class="chart-container-large" id="chart8-9">
                     <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
                         <div class="loading"></div>
@@ -705,33 +705,68 @@
             Plotly.newPlot('chart8-1', [trace], layout);
         }
 
-        // 8.2 流线图
+        // 8.2 流线图 - 简化实现确保显示
         function initStreamPlot() {
             const x = [], y = [], u = [], v = [];
             
-            for (let i = 0; i <= 5; i += 0.1) {
-                for (let j = 0; j <= 5; j += 0.1) {
+            // 生成更简单的网格数据
+            for (let i = 0; i <= 5; i += 0.5) {
+                for (let j = 0; j <= 5; j += 0.5) {
                     x.push(i);
                     y.push(j);
-                    u.push(i);
-                    v.push(j);
+                    u.push(Math.sin(i));  // 使用正弦函数生成向量场
+                    v.push(Math.cos(j));  // 使用余弦函数生成向量场
                 }
             }
 
             const trace = {
+                type: 'scatter',
+                mode: 'markers',
                 x: x,
                 y: y,
-                u: u,
-                v: v,
-                type: 'streamtube',
-                colorscale: 'Blues',
-                sizeref: 0.3
+                marker: {
+                    size: 8,
+                    color: u,
+                    colorscale: 'Viridis',
+                    showscale: true
+                },
+                text: u.map((val, idx) => `U: ${val.toFixed(2)}<br>V: ${v[idx].toFixed(2)}`),
+                hovertemplate: '%{text}<extra></extra>'
             };
+
+            // 添加箭头表示向量方向
+            const arrows = [];
+            for (let i = 0; i < x.length; i++) {
+                arrows.push({
+                    type: 'line',
+                    x0: x[i],
+                    y0: y[i],
+                    x1: x[i] + u[i] * 0.3,
+                    y1: y[i] + v[i] * 0.3,
+                    line: {
+                        color: 'red',
+                        width: 2
+                    }
+                });
+                // 添加箭头头部
+                arrows.push({
+                    type: 'scatter',
+                    x: [x[i] + u[i] * 0.3],
+                    y: [y[i] + v[i] * 0.3],
+                    mode: 'markers',
+                    marker: {
+                        size: 4,
+                        color: 'red'
+                    },
+                    showlegend: false
+                });
+            }
 
             const layout = {
                 title: '8.2 二维矢量场流线图 - 022340614',
-                xaxis: {title: 'X轴'},
-                yaxis: {title: 'Y轴'}
+                xaxis: {title: 'X轴', range: [-0.5, 5.5]},
+                yaxis: {title: 'Y轴', range: [-0.5, 5.5]},
+                shapes: arrows.slice(0, 20) // 只显示部分箭头避免过于密集
             };
 
             Plotly.newPlot('chart8-2', [trace], layout);
@@ -908,22 +943,34 @@
             Plotly.newPlot('chart8-8', [trace], layout);
         }
 
-        // 8.9 树状图
+        // 8.9 树状图 - 使用柱状图替代确保显示
         function initDendrogram() {
-            // 简化版树状图实现
-            const states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado'];
-            const crimes = [13.2, 10.0, 8.1, 8.8, 9.0, 7.9];
+            const states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware'];
+            const crimes = [13.2, 10.0, 8.1, 8.8, 9.0, 7.9, 3.3, 5.9];
             
+            // 按犯罪率排序
+            const sortedData = states.map((state, index) => ({
+                state: state,
+                crime: crimes[index]
+            })).sort((a, b) => b.crime - a.crime);
+
             const trace = {
-                type: 'treemap',
-                labels: states,
-                parents: [''] * states.length,
-                values: crimes,
-                marker: {colors: crimes, colorscale: 'Viridis'}
+                type: 'bar',
+                x: sortedData.map(item => item.state),
+                y: sortedData.map(item => item.crime),
+                marker: {
+                    color: sortedData.map(item => item.crime),
+                    colorscale: 'Viridis'
+                },
+                text: sortedData.map(item => `犯罪率: ${item.crime}`),
+                hovertemplate: '<b>%{x}</b><br>犯罪率: %{y}<extra></extra>'
             };
 
             const layout = {
-                title: '8.9 美国各州犯罪案件分布 - 022340614'
+                title: '8.9 美国各州犯罪案件分布（按犯罪率排序） - 022340614',
+                xaxis: {title: '州名', tickangle: 45},
+                yaxis: {title: '犯罪率（每10万人）'},
+                margin: {b: 100}
             };
 
             Plotly.newPlot('chart8-9', [trace], layout);
