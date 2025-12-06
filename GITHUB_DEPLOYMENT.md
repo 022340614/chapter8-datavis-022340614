@@ -5,15 +5,15 @@
 为了避免影响其他章节内容，我们为第八章创建独立的部署方案：
 
 ### 方案一：创建新仓库（强烈推荐）
-**仓库名**：`chapter8-advanced-charts-022340614`
+**仓库名**：`chapter8-datavis-022340614`
 **优势**：
 - 完全独立，不影响第五、第六、第七章
-- 简洁URL：`https://022340614.github.io/chapter8-advanced-charts-022340614/`
+- 简洁URL：`https://022340614.github.io/chapter8-datavis-022340614/`
 - 便于单独维护和更新
 
 **部署步骤**：
 1. 访问：`https://github.com/new`
-2. 仓库名：`chapter8-advanced-charts-022340614`
+2. 仓库名：`chapter8-datavis-022340614`
 3. 描述：第八章高级图表数据可视化平台
 4. 上传所有文件到根目录
 5. 启用GitHub Pages
@@ -45,7 +45,7 @@
 ## 🔗 独立访问链接
 
 ### 新仓库方案
-- **主URL**：`https://022340614.github.io/chapter8-advanced-charts-022340614/`
+- **主URL**：`https://022340614.github.io/chapter8-datavis-022340614/`
 - **备用URL**：`https://022340614.github.io/chapter8/`
 
 ### 子目录方案

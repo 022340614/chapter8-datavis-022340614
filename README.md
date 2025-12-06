@@ -6,10 +6,10 @@
 ## 🚀 独立部署方案
 
 ### 方案一：创建新仓库（推荐）
-1. 创建新仓库：`chapter8-advanced-charts-022340614`
+1. 创建新仓库：`chapter8-datavis-022340614`
 2. 上传本文件夹所有文件到新仓库根目录
 3. 启用GitHub Pages：Settings → Pages → Source: main branch → Save
-4. 访问：`https://022340614.github.io/chapter8-advanced-charts-022340614/`
+4. 访问：`https://022340614.github.io/chapter8-datavis-022340614/`
 
 ### 方案二：子目录部署
 1. 在现有仓库创建 `chapter8/` 文件夹
@@ -94,4 +94,4 @@
 
 ## 📞 技术支持
 **学号：022340614**
-**推荐独立URL：`https://022340614.github.io/chapter8-advanced-charts-022340614/`**
+**推荐独立URL：`https://022340614.github.io/chapter8-datavis-022340614/`**

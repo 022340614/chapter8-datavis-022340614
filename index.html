@@ -13,9 +13,26 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000">
     
-    <!-- 预加载优化 -->
+    <!-- 性能优化 -->
     <link rel="preload" href="https://cdn.plot.ly/plotly-2.16.1.min.js" as="script" crossorigin="anonymous">
-    <link rel="preconnect" href="https://cdn.plot.ly">
+    <link rel="preconnect" href="https://cdn.plot.ly" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.plot.ly">
+    
+    <!-- 延迟加载非关键资源 -->
+    <script>
+        // 延迟加载函数
+        function deferLoad() {
+            // 延迟初始化图表
+            setTimeout(initCharts, 1000);
+        }
+        
+        // 页面加载完成后延迟执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', deferLoad);
+        } else {
+            deferLoad();
+        }
+    </script>
     
     <style>
         :root {
@@ -361,7 +378,12 @@
                 <p>基于第八章10种高级图表类型的交互式数据可视化平台</p>
                 <p><strong>学号：022340614 | 安全稳定版本</strong></p>
                 <div class="success" id="status-message">
-                    ✅ 平台已安全部署 - 10种高级图表展示
+                    🔄 准备加载图表...
+                </div>
+                <div style="background: rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 0.5rem; margin-top: 0.5rem;">
+                    <div style="width: 100%; background: #e5e7eb; border-radius: 0.25rem; height: 0.5rem;">
+                        <div id="loading-bar" style="width: 0%; background: #10b981; height: 100%; border-radius: 0.25rem; transition: width 0.3s ease;"></div>
+                    </div>
                 </div>
             </section>
 
@@ -1042,6 +1064,43 @@
             document.getElementById('load-time').textContent = `${loadTime}ms`;
         }
 
+        // 分步加载图表
+        let loadedCharts = 0;
+        const totalCharts = 10;
+        
+        function loadChartSequentially() {
+            if (loadedCharts >= totalCharts) {
+                document.getElementById('status-message').innerHTML = '✅ 所有图表加载完成';
+                return;
+            }
+            
+            const chartFunctions = [
+                initContourPlot, initStreamPlot, initStemPlot, initDumbbellPlot,
+                initGanttChart, initPopulationPyramid, initFunnelChart,
+                initSankeyDiagram, initDendrogram, initWaffleChart
+            ];
+            
+            setTimeout(() => {
+                try {
+                    chartFunctions[loadedCharts]();
+                    loadedCharts++;
+                    updateLoadingProgress();
+                    loadChartSequentially();
+                } catch (error) {
+                    console.error('图表加载错误:', error);
+                    loadedCharts++;
+                    loadChartSequentially();
+                }
+            }, 300); // 每个图表间隔300ms
+        }
+        
+        function updateLoadingProgress() {
+            const progress = Math.round((loadedCharts / totalCharts) * 100);
+            document.getElementById('status-message').innerHTML = 
+                `🔄 图表加载中: ${progress}% (${loadedCharts}/${totalCharts})`;
+            document.getElementById('loading-bar').style.width = `${progress}%`;
+        }
+        
         // 页面加载初始化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('第八章高级图表可视化平台加载 - 022340614');
@@ -1052,9 +1111,9 @@
                 document.getElementById('status-message').innerHTML = '⚠️ 建议使用HTTPS访问以确保安全';
             }
             
-            // 初始化图表
+            // 延迟初始化图表
             if (typeof Plotly !== 'undefined') {
-                initCharts();
+                setTimeout(loadChartSequentially, 500);
             } else {
                 document.getElementById('status-message').className = 'error';
                 document.getElementById('status-message').innerHTML = '❌ Plotly.js加载失败，请检查网络连接';
